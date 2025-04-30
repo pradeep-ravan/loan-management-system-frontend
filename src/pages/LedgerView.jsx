@@ -22,16 +22,14 @@ const LedgerView = () => {
           return;
         }
         
-        // Use apiService to fetch data from backend
         const [userResponse, loanResponse] = await Promise.all([
           getUserById(userId),
           getLoanById(loanId)
         ]);
         
-        setUserData(userResponse.data);
-        setLoanData(loanResponse.data);
+        setUserData(userResponse?.data);
+        setLoanData(loanResponse?.data);
         
-        // Find the next upcoming EMI
         const nextEmi = getNextEMIDate(loanResponse.data.emiSchedule);
         setNextEMI(nextEmi);
         
@@ -46,7 +44,6 @@ const LedgerView = () => {
     fetchData();
   }, [navigate]);
   
-  // Helper function to get the next EMI date
   const getNextEMIDate = (schedule) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -58,14 +55,13 @@ const LedgerView = () => {
       }
     }
     
-    return null; // All EMIs are in the past or are paid
+    return null; 
   };
   
   const handleDownloadCSV = async () => {
     try {
       const loanId = localStorage.getItem('loanId');
       
-      // Use apiService to download CSV from backend
       await downloadLoanLedgerCSV(loanId);
     } catch (error) {
       console.error('Error downloading CSV:', error);
@@ -115,24 +111,24 @@ const LedgerView = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <h3 className="text-lg font-medium">Borrower Details</h3>
-                <p className="text-gray-600">Name: {userData.name}</p>
-                <p className="text-gray-600">PAN: {userData.pan}</p>
+                <p className="text-gray-600">Name: {userData?.name}</p>
+                <p className="text-gray-600">PAN: {userData?.pan}</p>
               </div>
               <div>
                 <h3 className="text-lg font-medium">Loan Details</h3>
-                <p className="text-gray-600">Principal: ₹{parseFloat(loanData.loanAmount).toLocaleString()}</p>
-                <p className="text-gray-600">Interest Rate: {loanData.interestRate}% p.a.</p>
-                <p className="text-gray-600">Tenure: {loanData.tenure} months</p>
+                <p className="text-gray-600">Principal: ₹{parseFloat(loanData?.loanAmount)?.toLocaleString()}</p>
+                <p className="text-gray-600">Interest Rate: {loanData?.interestRate}% p.a.</p>
+                <p className="text-gray-600">Tenure: {loanData?.tenure} months</p>
               </div>
               <div>
                 <h3 className="text-lg font-medium">EMI Information</h3>
-                <p className="text-gray-600">EMI Amount: ₹{loanData.emiSchedule[0]?.emi.toLocaleString()}</p>
+                <p className="text-gray-600">EMI Amount: ₹{loanData?.emiSchedule[0]?.emi?.toLocaleString()}</p>
                 <div className="mt-2">
                   {nextEMI ? (
                     <div className="bg-yellow-50 p-2 rounded-md border border-yellow-200">
                       <p className="text-sm font-medium text-yellow-800">Next EMI Due:</p>
-                      <p className="text-yellow-800 font-bold">{new Date(nextEMI.paymentDate).toLocaleDateString()}</p>
-                      <p className="text-sm text-yellow-700">₹{nextEMI.emi.toLocaleString()}</p>
+                      <p className="text-yellow-800 font-bold">{new Date(nextEMI?.paymentDate)?.toLocaleDateString()}</p>
+                      <p className="text-sm text-yellow-700">₹{nextEMI?.emi?.toLocaleString()}</p>
                     </div>
                   ) : (
                     <p className="text-green-600 font-medium">All EMIs completed!</p>
@@ -171,37 +167,37 @@ const LedgerView = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {loanData.emiSchedule.map((payment) => {
-                  const isNextPayment = nextEMI && payment.paymentNumber === nextEMI.paymentNumber;
-                  const isPastPayment = new Date(payment.paymentDate) < new Date() && 
-                                        (!nextEMI || payment.paymentNumber < nextEMI.paymentNumber);
+                {loanData?.emiSchedule?.map((payment) => {
+                  const isNextPayment = nextEMI && payment?.paymentNumber === nextEMI?.paymentNumber;
+                  const isPastPayment = new Date(payment?.paymentDate) < new Date() && 
+                                        (!nextEMI || payment?.paymentNumber < nextEMI?.paymentNumber);
                   
                   return (
                     <tr 
-                      key={payment.paymentNumber}
+                      key={payment?.paymentNumber}
                       className={`
                         ${isNextPayment ? 'bg-yellow-50' : ''}
-                        ${payment.isPaid ? 'bg-green-50' : ''}
-                        ${isPastPayment && !payment.isPaid ? 'bg-red-50' : ''}
+                        ${payment?.isPaid ? 'bg-green-50' : ''}
+                        ${isPastPayment && !payment?.isPaid ? 'bg-red-50' : ''}
                       `}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        {payment.paymentNumber}
+                        {payment?.paymentNumber}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {new Date(payment.paymentDate).toLocaleDateString()}
+                        {new Date(payment?.paymentDate)?.toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        ₹{payment.emi.toLocaleString()}
+                        ₹{payment?.emi?.toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        ₹{payment.principalPayment.toLocaleString()}
+                        ₹{payment?.principalPayment?.toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        ₹{payment.interestPayment.toLocaleString()}
+                        ₹{payment?.interestPayment?.toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        ₹{payment.remainingPrincipal.toLocaleString()}
+                        ₹{payment?.remainingPrincipal?.toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
@@ -213,7 +209,7 @@ const LedgerView = () => {
                                 ? 'bg-red-100 text-red-800'
                                 : 'bg-gray-100 text-gray-800'
                         }`}>
-                          {payment.isPaid 
+                          {payment?.isPaid 
                             ? 'Paid' 
                             : isNextPayment 
                               ? 'Upcoming'

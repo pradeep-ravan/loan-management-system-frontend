@@ -26,7 +26,6 @@ const Onboarding = () => {
       [name]: value
     }));
     
-    // Clear error for this field when typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -39,7 +38,6 @@ const Onboarding = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Validate all fields
     const validationErrors = validateOnboardingFields(formData);
     
     if (Object.keys(validationErrors).length > 0) {
@@ -49,20 +47,15 @@ const Onboarding = () => {
     }
     
     try {
-      // Use apiService to send data to backend
       const response = await createUser(formData);
       
-      // Store user ID for future API calls
-      localStorage.setItem('userId', response.data._id);
-      // Also store complete user data for display purposes
-      localStorage.setItem('userDetails', JSON.stringify(response.data));
+      localStorage.setItem('userId', response?.data._id);
+      localStorage.setItem('userDetails', JSON.stringify(response?.data));
       
-      // Navigate to loan details page
       navigate('/loan-details');
     } catch (error) {
       console.error('Error submitting form:', error);
       
-      // Handle API errors
       if (error.message) {
         setErrors(prev => ({
           ...prev,
@@ -138,7 +131,7 @@ const Onboarding = () => {
                   </div>
                   <div className="ml-3">
                     <p className="text-sm text-red-700">
-                      {errors.api}
+                      {errors?.api}
                     </p>
                   </div>
                 </div>
@@ -155,9 +148,9 @@ const Onboarding = () => {
                   <FormInput
                     label="Full Name"
                     name="name"
-                    value={formData.name}
+                    value={formData?.name}
                     onChange={handleChange}
-                    error={errors.name}
+                    error={errors?.name}
                     placeholder="Enter your full name"
                     required
                   />
@@ -168,9 +161,9 @@ const Onboarding = () => {
                     label="Date of Birth"
                     name="dob"
                     type="date"
-                    value={formData.dob}
+                    value={formData?.dob}
                     onChange={handleChange}
-                    error={errors.dob}
+                    error={errors?.dob}
                     required
                     max={new Date().toISOString().split('T')[0]}
                   />
@@ -184,9 +177,9 @@ const Onboarding = () => {
                   <FormInput
                     label="PAN Number"
                     name="pan"
-                    value={formData.pan.toUpperCase()}
+                    value={formData?.pan?.toUpperCase()}
                     onChange={handleChange}
-                    error={errors.pan}
+                    error={errors?.pan}
                     placeholder="ABCDE1234F"
                     required
                   />
@@ -196,9 +189,9 @@ const Onboarding = () => {
                   <FormInput
                     label="Aadhar Number"
                     name="aadhar"
-                    value={formData.aadhar}
+                    value={formData?.aadhar}
                     onChange={handleChange}
-                    error={errors.aadhar}
+                    error={errors?.aadhar}
                     placeholder="123456789012"
                     required
                   />
@@ -212,9 +205,9 @@ const Onboarding = () => {
                   <FormInput
                     label="GSTIN"
                     name="gstin"
-                    value={formData.gstin.toUpperCase()}
+                    value={formData?.gstin?.toUpperCase()}
                     onChange={handleChange}
-                    error={errors.gstin}
+                    error={errors?.gstin}
                     placeholder="22AAAAA0000A1Z5"
                     required
                   />
@@ -224,9 +217,9 @@ const Onboarding = () => {
                   <FormInput
                     label="UDYAM Registration Number"
                     name="udyam"
-                    value={formData.udyam.toUpperCase()} 
+                    value={formData?.udyam?.toUpperCase()} 
                     onChange={handleChange}
-                    error={errors.udyam}
+                    error={errors?.udyam}
                     placeholder="UDYAM-XX-XX-XXXXXXX"
                     required
                   />

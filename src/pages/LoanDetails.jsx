@@ -25,7 +25,6 @@ const LoanDetails = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userData, setUserData] = useState(null);
   
-  // Check if user exists in backend
   useEffect(() => {
     const userId = localStorage.getItem('userId');
     const userDetails = localStorage.getItem('userDetails');
@@ -48,7 +47,6 @@ const LoanDetails = () => {
       [name]: value
     }));
     
-    // Clear error for this field when typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -66,8 +64,7 @@ const LoanDetails = () => {
       repaymentDates: newDates
     }));
     
-    // Clear repayment dates error when typing
-    if (errors.repaymentDates) {
+    if (errors?.repaymentDates) {
       setErrors(prev => ({
         ...prev,
         repaymentDates: ''
@@ -83,9 +80,9 @@ const LoanDetails = () => {
   };
   
   const removeRepaymentDate = (index) => {
-    if (formData.repaymentDates.length > 1) {
+    if (formData?.repaymentDates?.length > 1) {
       const newDates = [...formData.repaymentDates];
-      newDates.splice(index, 1);
+      newDates?.splice(index, 1);
       
       setFormData(prev => ({
         ...prev,
@@ -97,22 +94,21 @@ const LoanDetails = () => {
   const validateForm = () => {
     const validationErrors = {};
     
-    const loanAmountError = validateLoanAmount(formData.loanAmount);
-    if (loanAmountError) validationErrors.loanAmount = loanAmountError;
+    const loanAmountError = validateLoanAmount(formData?.loanAmount);
+    if (loanAmountError) validationErrors?.loanAmount = loanAmountError;
     
-    const interestRateError = validateInterestRate(formData.interestRate);
-    if (interestRateError) validationErrors.interestRate = interestRateError;
+    const interestRateError = validateInterestRate(formData?.interestRate);
+    if (interestRateError) validationErrors?.interestRate = interestRateError;
     
     const tenureError = validateTenure(formData.tenure);
-    if (tenureError) validationErrors.tenure = tenureError;
+    if (tenureError) validationErrors?.tenure = tenureError;
     
-    const disbursementDateError = validateDisbursementDate(formData.disbursementDate);
-    if (disbursementDateError) validationErrors.disbursementDate = disbursementDateError;
+    const disbursementDateError = validateDisbursementDate(formData?.disbursementDate);
+    if (disbursementDateError) validationErrors?.disbursementDate = disbursementDateError;
     
-    // Filter out empty repayment dates
-    const filteredDates = formData.repaymentDates.filter(date => date.trim() !== '');
-    const repaymentDatesError = validateRepaymentDates(filteredDates, formData.disbursementDate);
-    if (repaymentDatesError) validationErrors.repaymentDates = repaymentDatesError;
+    const filteredDates = formData?.repaymentDates?.filter(date => date?.trim() !== '');
+    const repaymentDatesError = validateRepaymentDates(filteredDates, formData?.disbursementDate);
+    if (repaymentDatesError) validationErrors?.repaymentDates = repaymentDatesError;
     
     return validationErrors;
   };
@@ -121,44 +117,36 @@ const LoanDetails = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Validate all fields
     const validationErrors = validateForm();
     
-    if (Object.keys(validationErrors).length > 0) {
+    if (Object.keys(validationErrors)?.length > 0) {
       setErrors(validationErrors);
       setIsSubmitting(false);
       return;
     }
     
     try {
-      // Get the user ID
       const userId = localStorage.getItem('userId');
       
       if (!userId) {
         throw new Error('User not found. Please complete your personal details first.');
       }
       
-      // Filter out empty repayment dates
       const cleanedData = {
         ...formData,
         userId,
-        repaymentDates: formData.repaymentDates.filter(date => date.trim() !== '')
+        repaymentDates: formData?.repaymentDates?.filter(date => date?.trim() !== '')
       };
       
-      // Use apiService to create a loan in the backend
       const response = await createLoan(cleanedData);
       
-      // Store loan ID for future API calls
       localStorage.setItem('loanId', response.data._id);
-      // Also store loan details for display purposes
       localStorage.setItem('loanDetails', JSON.stringify(response.data));
       
-      // Navigate to ledger view
       navigate('/ledger');
     } catch (error) {
       console.error('Error submitting form:', error);
       
-      // Handle API errors
       if (error.message) {
         setErrors(prev => ({
           ...prev,
@@ -172,17 +160,15 @@ const LoanDetails = () => {
     }
   };
   
-  // Function to calculate estimated EMI for display
   const calculateEstimatedEMI = () => {
-    const loanAmount = parseFloat(formData.loanAmount);
-    const interestRate = parseFloat(formData.interestRate);
-    const tenure = parseInt(formData.tenure);
+    const loanAmount = parseFloat(formData?.loanAmount);
+    const interestRate = parseFloat(formData?.interestRate);
+    const tenure = parseInt(formData?.tenure);
     
     if (!loanAmount || !interestRate || !tenure) {
       return null;
     }
     
-    // Calculate EMI: [P x R x (1+R)^N]/[(1+R)^N-1]
     const monthlyRate = interestRate / 12 / 100;
     const emi = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, tenure) / 
                 (Math.pow(1 + monthlyRate, tenure) - 1);
@@ -254,8 +240,8 @@ const LoanDetails = () => {
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <h3 className="font-medium text-blue-900">Applicant: {userData.name}</h3>
-                  <p className="text-sm text-blue-700">PAN: {userData.pan}</p>
+                  <h3 className="font-medium text-blue-900">Applicant: {userData?.name}</h3>
+                  <p className="text-sm text-blue-700">PAN: {userData?.pan}</p>
                 </div>
               </div>
             </div>
@@ -272,7 +258,7 @@ const LoanDetails = () => {
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm text-red-700">{errors.api}</p>
+                    <p className="text-sm text-red-700">{errors?.api}</p>
                   </div>
                 </div>
               </div>
@@ -290,9 +276,9 @@ const LoanDetails = () => {
                     label="Disbursement Date"
                     name="disbursementDate"
                     type="date"
-                    value={formData.disbursementDate}
+                    value={formData?.disbursementDate}
                     onChange={handleChange}
-                    error={errors.disbursementDate}
+                    error={errors?.disbursementDate}
                     required
                   />
                 </div>
@@ -302,9 +288,9 @@ const LoanDetails = () => {
                     label="Loan Amount (₹)"
                     name="loanAmount"
                     type="number"
-                    value={formData.loanAmount}
+                    value={formData?.loanAmount}
                     onChange={handleChange}
-                    error={errors.loanAmount}
+                    error={errors?.loanAmount}
                     placeholder="Enter loan amount"
                     min="1000"
                     required
@@ -316,9 +302,9 @@ const LoanDetails = () => {
                     label="Interest Rate (% per annum)"
                     name="interestRate"
                     type="number"
-                    value={formData.interestRate}
+                    value={formData?.interestRate}
                     onChange={handleChange}
-                    error={errors.interestRate}
+                    error={errors?.interestRate}
                     placeholder="Enter interest rate"
                     min="0.1"
                     max="100"
@@ -332,9 +318,9 @@ const LoanDetails = () => {
                     label="Tenure (in months)"
                     name="tenure"
                     type="number"
-                    value={formData.tenure}
+                    value={formData?.tenure}
                     onChange={handleChange}
-                    error={errors.tenure}
+                    error={errors?.tenure}
                     placeholder="Enter loan tenure in months"
                     min="1"
                     required
@@ -350,7 +336,7 @@ const LoanDetails = () => {
                         <p className="text-xs text-green-600">Based on entered values</p>
                       </div>
                       <div className="text-xl font-bold text-green-700">
-                        ₹{estimatedEMI.toLocaleString()}
+                        ₹{estimatedEMI?.toLocaleString()}
                       </div>
                     </div>
                   </div>
@@ -363,7 +349,7 @@ const LoanDetails = () => {
                 
                 <div className="col-span-2">
                   <div className="space-y-3">
-                    {formData.repaymentDates.map((date, index) => (
+                    {formData?.repaymentDates?.map((date, index) => (
                       <div key={index} className="flex items-center space-x-2">
                         <div className="flex-grow">
                           <input
@@ -371,7 +357,7 @@ const LoanDetails = () => {
                             value={date}
                             onChange={(e) => handleRepaymentDateChange(index, e.target.value)}
                             className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-3 pr-12 sm:text-sm border-gray-300 rounded-md shadow-sm"
-                            min={formData.disbursementDate || undefined}
+                            min={formData?.disbursementDate || undefined}
                             required
                           />
                         </div>
@@ -379,7 +365,7 @@ const LoanDetails = () => {
                         <button
                           type="button"
                           onClick={() => removeRepaymentDate(index)}
-                          disabled={formData.repaymentDates.length <= 1}
+                          disabled={formData?.repaymentDates?.length <= 1}
                           className="inline-flex items-center p-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:bg-red-300 transition-colors duration-200"
                         >
                           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -389,8 +375,8 @@ const LoanDetails = () => {
                       </div>
                     ))}
                     
-                    {errors.repaymentDates && (
-                      <p className="mt-1 text-sm text-red-600">{errors.repaymentDates}</p>
+                    {errors?.repaymentDates && (
+                      <p className="mt-1 text-sm text-red-600">{errors?.repaymentDates}</p>
                     )}
                     
                     <button
