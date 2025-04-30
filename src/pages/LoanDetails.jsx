@@ -95,20 +95,20 @@ const LoanDetails = () => {
     const validationErrors = {};
     
     const loanAmountError = validateLoanAmount(formData?.loanAmount);
-    if (loanAmountError) validationErrors?.loanAmount = loanAmountError;
+    if (loanAmountError) validationErrors.loanAmount = loanAmountError;
     
     const interestRateError = validateInterestRate(formData?.interestRate);
-    if (interestRateError) validationErrors?.interestRate = interestRateError;
+    if (interestRateError) validationErrors.interestRate = interestRateError;
     
     const tenureError = validateTenure(formData.tenure);
-    if (tenureError) validationErrors?.tenure = tenureError;
+    if (tenureError) validationErrors.tenure = tenureError;
     
     const disbursementDateError = validateDisbursementDate(formData?.disbursementDate);
-    if (disbursementDateError) validationErrors?.disbursementDate = disbursementDateError;
+    if (disbursementDateError) validationErrors.disbursementDate = disbursementDateError;
     
     const filteredDates = formData?.repaymentDates?.filter(date => date?.trim() !== '');
     const repaymentDatesError = validateRepaymentDates(filteredDates, formData?.disbursementDate);
-    if (repaymentDatesError) validationErrors?.repaymentDates = repaymentDatesError;
+    if (repaymentDatesError) validationErrors.repaymentDates = repaymentDatesError;
     
     return validationErrors;
   };
